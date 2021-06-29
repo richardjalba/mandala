@@ -1,6 +1,6 @@
 const Products = require('../models/productModel');
 
-// Filter, Sorting, Pagination
+// Filter, sorting and paginating
 
 class APIfeatures {
   constructor(query, queryString) {
@@ -8,7 +8,7 @@ class APIfeatures {
     this.queryString = queryString;
   }
   filtering() {
-    const queryObj = { ...this.queryString }; // queryString = req.query
+    const queryObj = { ...this.queryString }; //queryString = req.query
 
     const excludedFields = ['page', 'sort', 'limit'];
     excludedFields.forEach((el) => delete queryObj[el]);
@@ -19,10 +19,10 @@ class APIfeatures {
       (match) => '$' + match
     );
 
-    // gte = greater than or equal
-    // lte = less than or equal
-    // lt = less than
-    // gt = greater than
+    //    gte = greater than or equal
+    //    lte = lesser than or equal
+    //    lt = lesser than
+    //    gt = greater than
     this.query.find(JSON.parse(queryStr));
 
     return this;
@@ -31,7 +31,6 @@ class APIfeatures {
   sorting() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
-      console.log(sortBy);
       this.query = this.query.sort(sortBy);
     } else {
       this.query = this.query.sort('-createdAt');
@@ -52,7 +51,6 @@ class APIfeatures {
 const productCtrl = {
   getProducts: async (req, res) => {
     try {
-      console.log(req.query);
       const features = new APIfeatures(Products.find(), req.query)
         .filtering()
         .sorting()
@@ -83,9 +81,8 @@ const productCtrl = {
       if (!images) return res.status(400).json({ msg: 'No image upload' });
 
       const product = await Products.findOne({ product_id });
-
       if (product)
-        return res.status(400).json({ msg: 'This product already exists' });
+        return res.status(400).json({ msg: 'This product already exists.' });
 
       const newProduct = new Products({
         product_id,
@@ -106,7 +103,7 @@ const productCtrl = {
   deleteProduct: async (req, res) => {
     try {
       await Products.findByIdAndDelete(req.params.id);
-      res.json({ msg: 'Deleted a product' });
+      res.json({ msg: 'Deleted a Product' });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -128,7 +125,7 @@ const productCtrl = {
         }
       );
 
-      res.json({ msg: 'Updated a product' });
+      res.json({ msg: 'Updated a Product' });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
